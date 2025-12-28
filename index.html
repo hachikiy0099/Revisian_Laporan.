@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nur Azkia_Laporan_Revisi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;  
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff96c0 0%, #a5c6ff 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .gallery-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ff94ba;
+        }
+        
+        .instructions p {
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .instructions i {
+            color: #ff90aa;
+            margin-right: 8px;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .thumbnail {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 180px;
+        }
+        
+        .thumbnail:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .thumbnail:hover img {
+            transform: scale(1.05);
+        }
+        
+        .thumbnail-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .thumbnail:hover .thumbnail-overlay {
+            transform: translateY(0);
+        }
+        
+        /* Modal untuk gambar penuh */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoomIn 0.4s ease-out;
+            touch-action: pan-y; /* Memungkinkan geser vertikal */
+        }
+        
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        
+        .modal-caption {
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.2rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 0 0 8px 8px;
+            margin-top: -5px;
+        }
+        
+        /* Pesan terima kasih */
+        .thank-you-message {
+            display: none;
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff96c0 0%, #a5c6ff 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 80%;
+            z-index: 1002;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .thank-you-message h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .thank-you-message p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .close-btn:hover {
+            color: #ff5252;
+        }
+        
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1001;
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .prev-btn {
+            left: 20px;
+        }
+        
+        .next-btn {
+            right: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            background-color: #ff6da3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #87e3ff;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsif */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .thank-you-message {
+                bottom: 70px;
+                padding: 15px 20px;
+            }
+            
+            .thank-you-message h3 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .prev-btn {
+                left: 10px;
+            }
+            
+            .next-btn {
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-images"></i> Laporan Individu -Revisi-</h1>
+            <p class="subtitle">Klik pada gambar kecil untuk melihatnya dalam ukuran penuh</p>
+        </header>
+        
+        <main>
+            <div class="gallery-container">
+                <div class="instructions">
+                    <p><i class="fas fa-info-circle"></i> <strong>Cara menggunakan:</strong> Klik salah satu gambar di bawah untuk melihatnya dalam ukuran penuh. Di mode tampilan penuh, Anda bisa berpindah gambar menggunakan tombol navigasi, menekan tombol Esc untuk keluar, atau menggeser gambar di perangkat sentuh.</p>
+                </div>
+                
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Gambar-gambar akan ditambahkan melalui JavaScript -->
+                </div>
+                
+                <div class="controls">
+                    <button class="btn" id="prevBtn"><i class="fas fa-arrow-left"></i> Gambar Sebelumnya</button>
+                    <button class="btn" id="nextBtn">Gambar Selanjutnya <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Dibuat oleh Nur Azkia</i> | Laporan Individu -Revisi- &copy; 2025</p>
+        </footer>
+    </div>
+    
+    <!-- Modal untuk menampilkan gambar penuh -->
+    <div class="modal-overlay" id="modalOverlay">
+        <button class="nav-btn prev-btn" id="modalPrevBtn"><i class="fas fa-chevron-left"></i></button>
+        <button class="nav-btn next-btn" id="modalNextBtn"><i class="fas fa-chevron-right"></i></button>
+        
+        <div class="modal-content" id="modalContent">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <img id="modalImage" src="" alt="Gambar penuh">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+        
+        <!-- Pesan terima kasih -->
+        <div class="thank-you-message" id="thankYouMessage">
+            <h3><i class="fas fa-heart"></i> Terima Kasih!</h3>
+            <p>Anda telah melihat semua gambar dalam galeri ini. Semoga laporan revisi ini dapat menjadi bahan pelengkap untuk dapat lulus mata kuliah, dan jika sekiranya masih ada kekeliruan, saya siap memperbaikinya. Mohon maaf sebesar-besarnya jika saya banyak membuat kesalahan yang sama.</p>
+        </div>
+    </div>
+
+    <script>
+        // Data gambar untuk galeri
+        const galleryImages = [
+            {
+                id: 1,
+                url: "2.jpeg",
+                thumbnail: "2.jpeg",
+                title: "P1 = Sebelum revisi #1"
+            },
+            {
+                id: 2,
+                url: "1.jpeg",
+                thumbnail: "1.jpeg",
+                title: "P1 = Sesudah revisi #1",
+            },
+            {
+                id: 3,
+                url: "1-1.jpeg",
+                thumbnail: "1-1.jpeg",
+                title: "P1 = Sebelum revisi #2",
+            },
+            {
+                id: 4,
+                url: "1-2.jpeg",
+                thumbnail: "1-2.jpeg",
+                title: "P1 = Sesudah revisi #2",
+            },
+            {
+                id: 5,
+                url: "1-4.jpeg",
+                thumbnail: "1-4.jpeg",
+                title: "P1 = Sebelum revisi #3",
+            },
+            {
+                id: 6,
+                url: "1-3.jpeg",
+                thumbnail: "1-3.jpeg",
+                title: "P1 = Sesudah revisi #3",
+            },
+            {
+                id: 7,
+                url: "1-6.jpeg",
+                thumbnail: "1-6.jpeg",
+                title: "P1 = Sebelum revisi #4",
+            },
+            {
+                id: 8,
+                url: "1-5.jpeg",
+                thumbnail: "1-5.jpeg",
+                title: "P1 = Sesudah revisi #4",
+            },
+            {
+                id: 9,
+                url: "1-8.jpeg",
+                thumbnail: "1-8.jpeg",
+                title: "P1 = Sebelum revisi #5",
+            },
+            {
+                id: 10,
+                url: "1-7.jpeg",
+                thumbnail: "1-7.jpeg",
+                title: "P1 = Sesudah revisi #5",
+            },
+            {
+                id: 11,
+                url: "2-1.jpeg",
+                thumbnail: "2-1.jpeg",
+                title: "P2 = Sebelum revisi #6",
+            },
+            {
+                id: 12,
+                url: "2-2.jpeg",
+                thumbnail: "2-2.jpeg",
+                title: "P1 = Sesudah revisi #6",
+            },
+            {
+                id: 13,
+                url: "2-3.jpeg",
+                thumbnail: "2-3.jpeg",
+                title: "P2 = Sebelum revisi #7",
+            },
+            {
+                id: 14,
+                url: "2-5.jpeg",
+                thumbnail: "2-5.jpeg",
+                title: "P2 = Sesudah revisi #7",
+            },
+            {
+                id: 15,
+                url: "2-4.jpeg",
+                thumbnail: "2-4.jpeg",
+                title: "P2 = Sebelum revisi #8",
+            },
+            {
+                id: 16,
+                url: "2-6.jpeg",
+                thumbnail: "2-6.jpeg",
+                title: "P2 = Sesudah revisi #8",
+            },
+            {
+                id: 17,
+                url: "3-1.jpeg",
+                thumbnail: "3-1.jpeg",
+                title: "P2 = Sebelum revisi #9",
+            },
+            {
+                id: 18,
+                url: "3-2.jpeg",
+                thumbnail: "3-2.jpeg",
+                title: "P3 = Sesudah revisi #9",
+            },
+            {
+                id: 19,
+                url: "3-4.jpeg",
+                thumbnail: "3-4.jpeg",
+                title: "P2 = Sebelum revisi #10",
+            },
+            {
+                id: 20,
+                url: "3-5.jpeg",
+                thumbnail: "3-5.jpeg",
+                title: "P3 = Sesudah revisi #10",
+            },
+            {
+                id: 21,
+                url: "3-6.jpeg",
+                thumbnail: "3-6.jpeg",
+                title: "P2 = Sebelum revisi #11",
+            },
+            {
+                id: 22,
+                url: "3-7.jpeg",
+                thumbnail: "3-7.jpeg",
+                title: "P3 = Sesudah revisi #11",
+            },
+            {
+                id: 23,
+                url: "3-8.jpeg",
+                thumbnail: "3-8.jpeg",
+                title: "P2 = Sebelum revisi #12",
+            },
+            {
+                id: 24,
+                url: "3-9.jpeg",
+                thumbnail: "3-9.jpeg",
+                title: "P3 = Sesudah revisi #12",
+            },
+            {
+                id: 25,
+                url: "dapus p1.jpeg",
+                thumbnail: "dapus p1.jpeg",
+                title: "P1 = telah saya lampirkan sesuai dapus",
+            },
+            {
+                id: 26,
+                url: "dapus p2.jpeg",
+                thumbnail: "dapus p2.jpeg",
+                title: "P2 = telah saya lampirkan sesuai dapus",
+            }
+        ];
+        
+        // Elemen DOM
+        const galleryGrid = document.getElementById('galleryGrid');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalImage = document.getElementById('modalImage');
+        const modalCaption = document.getElementById('modalCaption');
+        const modalContent = document.getElementById('modalContent');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalPrevBtn = document.getElementById('modalPrevBtn');
+        const modalNextBtn = document.getElementById('modalNextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const thankYouMessage = document.getElementById('thankYouMessage');
+        
+        // Variabel untuk melacak gambar yang aktif
+        let currentImageIndex = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // Fungsi untuk membuat thumbnail gambar
+        function createThumbnails() {
+            galleryImages.forEach((image, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'thumbnail';
+                thumbnail.dataset.index = index;
+                
+                thumbnail.innerHTML = `
+                    <img src="${image.thumbnail}" alt="${image.title}" loading="lazy">
+                    <div class="thumbnail-overlay">
+                        <h3>${image.title}</h3>
+                        <p>Klik untuk memperbesar</p>
+                    </div>
+                `;
+                
+                // Tambahkan event listener untuk membuka modal
+                thumbnail.addEventListener('click', () => openModal(index));
+                
+                galleryGrid.appendChild(thumbnail);
+            });
+        }
+        
+        // Fungsi untuk membuka modal dengan gambar yang dipilih
+        function openModal(index) {
+            currentImageIndex = parseInt(index);
+            updateModalContent();
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Mencegah scrolling di background
+            hideThankYouMessage();
+        }
+        
+        // Fungsi untuk menutup modal
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Mengembalikan scrolling
+            hideThankYouMessage();
+        }
+        
+        // Fungsi untuk memperbarui konten modal berdasarkan currentImageIndex
+        function updateModalContent() {
+            const currentImage = galleryImages[currentImageIndex];
+            modalImage.src = currentImage.url;
+            modalImage.alt = currentImage.title;
+            modalCaption.innerHTML = `
+                <h3>${currentImage.title}</h3>
+                <p><small>Gambar ${currentImageIndex + 1} dari ${galleryImages.length}</small></p>
+            `;
+        }
+        
+        // Fungsi untuk menampilkan gambar sebelumnya
+        function showPrevImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateModalContent();
+                hideThankYouMessage();
+            } else {
+                // Jika sudah di gambar pertama, kembali ke gambar terakhir
+                currentImageIndex = galleryImages.length - 1;
+                updateModalContent();
+                hideThankYouMessage();
+            }
+        }
+        
+        // Fungsi untuk menampilkan gambar berikutnya
+        function showNextImage() {
+            if (currentImageIndex < galleryImages.length - 1) {
+                currentImageIndex++;
+                updateModalContent();
+                
+                // Jika mencapai gambar terakhir, tampilkan pesan terima kasih
+                if (currentImageIndex === galleryImages.length - 1) {
+                    setTimeout(showThankYouMessage, 300);
+                } else {
+                    hideThankYouMessage();
+                }
+            } else {
+                // Jika sudah di gambar terakhir, kembali ke gambar pertama
+                currentImageIndex = 0;
+                updateModalContent();
+                hideThankYouMessage();
+            }
+        }
+        
+        // Fungsi untuk menampilkan pesan terima kasih
+        function showThankYouMessage() {
+            thankYouMessage.style.display = 'block';
+        }
+        
+        // Fungsi untuk menyembunyikan pesan terima kasih
+        function hideThankYouMessage() {
+            thankYouMessage.style.display = 'none';
+        }
+        
+        // Fungsi untuk menangani gesture swipe
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+        
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+        
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimal jarak swipe dalam piksel
+            
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // Swipe ke kiri = next image
+                showNextImage();
+            } else if (touchEndX > touchStartX + swipeThreshold) {
+                // Swipe ke kanan = prev image
+                showPrevImage();
+            }
+        }
+        
+        // Event listener untuk navigasi di modal
+        modalPrevBtn.addEventListener('click', showPrevImage);
+        modalNextBtn.addEventListener('click', showNextImage);
+        
+        // Event listener untuk navigasi di bawah galeri
+        prevBtn.addEventListener('click', () => {
+            if (currentImageIndex > 0) {
+                openModal(currentImageIndex - 1);
+            } else {
+                openModal(galleryImages.length - 1);
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentImageIndex < galleryImages.length - 1) {
+                openModal(currentImageIndex + 1);
+            } else {
+                openModal(0);
+            }
+        });
+        
+        // Event listener untuk menutup modal
+        closeModalBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+        
+        // Event listener untuk keyboard
+        document.addEventListener('keydown', (e) => {
+            if (modalOverlay.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    closeModal();
+                } else if (e.key === 'ArrowLeft') {
+                    showPrevImage();
+                } else if (e.key === 'ArrowRight') {
+                    showNextImage();
+                }
+            }
+        });
+        
+        // Event listener untuk touch/swipe pada modal
+        modalContent.addEventListener('touchstart', handleTouchStart, false);
+        modalContent.addEventListener('touchend', handleTouchEnd, false);
+        
+        // Inisialisasi galeri saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            createThumbnails();
+            
+            // Tambahkan beberapa gambar secara dinamis untuk menunjukkan fungsionalitas
+            setTimeout(() => {
+                console.log("Galeri gambar siap digunakan! Klik pada gambar untuk melihatnya dalam ukuran penuh.");
+            }, 500);
+        });
+    </script>
+</body>
+</html>
